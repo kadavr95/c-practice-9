@@ -59,6 +59,9 @@ int main(void) {
 }
 long int sum2(long int x,long int y)
 {
+  int z;
+  int m[51];
+  z=x+y;
 
 }
 long int BASEto10(long int a) {
