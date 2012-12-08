@@ -8,7 +8,7 @@ long int toBASE(long int a10,long int *z);
 long int sum(long int x,long int y,long int *z);
 long int multiply(long int x,long int y,long int *z);
 long int power(long int x,long int y,long int *z);
-long int sum2(long int x, long int y)
+long int sum2(long int x, long int y);
 
 int main(void) {
  long int x, y,z=0,r=0,u,uu=0;
@@ -59,10 +59,25 @@ int main(void) {
 }
 long int sum2(long int x,long int y)
 {
-  int z;
+  int z,i=0;
   int m[51];
   z=x+y;
-
+  for (i = 0; i < 51; i++) {
+  m[i]=0;
+  }
+  i=0;
+  while (z>0)
+	  {
+	  i++;
+		  m[i]=z%10;
+		  z=z/10;
+	  }
+  for (i = 1; i < 51; i++) {
+	 if (m[i]>=5) {
+	  m[i]=m[i]-5;
+	  m[i+1]++;
+	 }
+  }
 }
 long int BASEto10(long int a) {
  int k=1;
@@ -95,6 +110,7 @@ long int sum(long int x,long int y,long int *z)
 {
 int t1=1,t2=1;
 long int w,v;
+sum2(x,y);
   x=BASEto10(x);
   y=BASEto10(y);
   if (y>0)
