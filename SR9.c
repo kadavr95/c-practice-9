@@ -13,14 +13,24 @@ return 0;
 }
 
 int recur(int kk) {
- //printf("%d %d\n",mm,nn);
-if ((mm==0)||(nn==0))
+ int s;
+ printf("%d\n",kk);
+if ((kk<=2))
  {
-   return (nn+1);
+ if (kk==1) {
+
+   s=1;
+   return s;
+ }
+ if (kk==2) {
+
+   s=2;
+   return s;
+ }
  }
 else
 {
- return (recur(mm-1,recur(mm,nn-1)));
-}
-}
 
+ return 2*recur(kk-1)+recur(kk-2);
+}
+}
