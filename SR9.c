@@ -1,58 +1,200 @@
 #include <stdio.h>
 #include <limits.h>
-int recur(int kk);
+#include <math.h>
+#define BASE 5
+
+long int BASEto10(long int a);
+long int toBASE(long int a10,long int *z);
+long int sum(long int x,long int y,long int *z);
+long int multiply(long int x,long int y,long int *z);
+long int power(long int x,long int y,long int *z);
+long int sum2(long int x, long int y);
 
 int main(void) {
-int k,i=1,r;
-printf("Input numbers:");
-scanf("%d", &k);
-r=recur(k);
-if (r==0) {
- printf("Function=ERROR\n");
-}
-else
-{
-printf("Function=%d\n", r);
-printf("|Lvl|    Value on enter   |                 Value on return                |\n");
-printf("| 0 |Enter:%2d Function(%2d)|                               Result:%10d|\n",k,k,recur(k));
-while (k>1)
-{
-if (k==2)
-	printf("|%2d |i=%2d                 |Return:  %10d            Result:%10d|\n",i,k,2,recur(k));
-	else
- printf("|%2d |i=%2d     Function(%2d)|Return:%10d+2*%-10d Result:%10d|\n",i,k,k,recur(k-2),recur(k-1),recur(k));
- i++;
- k--;
-}
-printf("|%2d |i=%2d                  Return:  %10d            Result:%10d|\n",i,k,1,recur(k));
-}
-fflush(stdin);
-getchar();
-return 0;
-}
-
-int recur(int kk) {
-int s=0;
-if ((kk<=2))
+ long int x, y,z=0,r=0,u,uu=0;
+ int ch=0;
+ char op;
+ printf("Enter expression: ");
+ scanf("%ld%c%ld", &x,&op,&y);
+ if (op=='+')
  {
- if (kk==1) {
-   s=1;
-   return s;
+   ch=sum(x,y,&z);
  }
- if (kk==2) {
-   s=2;
-   return s;
+ if (op=='-')
+ {
+   y*=-1;
+   ch=sum(x,y,&z);
  }
+ if (op=='*')
+ {
+   ch=multiply(x,y,&z);
  }
-else
+ if (op=='^')
+ {
+   ch=power(x,y,&z);
+ }
+ if (ch==1)
+  printf("Z: %ld\n", z);
+ else
+ printf("Result:ERROR: Limits overflow\n");
+ z=0;
+ ch=1;
+ //r=sum(sum(power(y,3,&z),-(power(sum(y,-x,&z),2,&z)),&z),x,&z) ;
+ ch*=sum(y,-x,&z);
+ u=z;
+ z=0;
+ ch*=power(u,2,&z);
+ u=z;
+ ch*=power(y,3,&uu);
+ z=0;
+ ch*=sum(uu,(-u),&z);
+ //ch*=(power(y,3,&z),(-(u)),&z);
+ u=z;
+ z=0;
+ ch*=sum(u,x,&z);
+ printf("Result: %ld\n", z);
+ fflush(stdin);
+ getchar();
+ return 0;
+}
+long int sum2(long int x,long int y)
 {
-if ((INT_MAX-2*recur(kk-1))>s) {
+  long int z=0,i=0;
+  int am[51],bm[51],cm[51];
+  for (i = 0; i < 51; i++) {
+  am[i]=0;
+  bm[i]=0;
+  cm[i]=0;
+  }
+  i=0;
+  while ((x>0)&&(y>0))
+	  {
+	  i++;
+		  am[i]=x%10;
+		  x=x/10;
+		  bm[i]=y%10;
+		  y=y/10;
+	  }
+  for (i = 1; i < 51; i++) {
+	 if ((am[i]+bm[i]+cm[i])>=5) {
+	  cm[i]=cm[i]+am[i]+bm[i]-5;
+	  cm[i+1]++;
+	 }
+	 else
+	 cm[i]=cm[i]+am[i]+bm[i];
+  }
+  for (i = 1; i < 51; i++) {
+	z=z+cm[i]*(pow(10,i-1));
+  }
+  return(z);
+}
+long int BASEto10(long int a) {
+ int k=1;
+ long int a10=0;
+ while (a) {
+  a10 += k*(a%10);
+  k *= BASE;
+  a /= 10;
+ }
+ return a10;
+}
 
-s= 2*recur(kk-1)+recur(kk-2);
+long int toBASE(long int a10,long int *z)
+{
+ int k=1;
+ if ((a10>=-4687499) && (a10<=4687499))
+ {
+ while (a10)
+ {
+  *z += k*(a10%BASE);
+  k *= 10;
+  a10 /= BASE;
+ }
+ return 1;
+ }
+ else
+ return 0;
 }
-else
-s=0;
- return s;
+long int sum(long int x,long int y,long int *z)
+{
+int t1=1,t2=1;
+long int w,v;
+sum2(x,y);
+  x=BASEto10(x);
+  y=BASEto10(y);
+  if (y>0)
+  {
+   if ((LONG_MAX-y)>x)
+   {
+	 w=x+y;
+   }
+   else
+	 t1=0;
+  }
+  else
+  if ((LONG_MIN-y)<x)
+   {
+	 w=x+y;
+   }
+   else
+	 t1=0;
+  v=*z;
+  t2=toBASE(w,&v);
+  *z=v;
+  return t1*t2;
 }
+long int multiply(long int x,long int y,long int *z)
+{
+int t1=1,t2=1;
+long int w,v;
+  x=BASEto10(x);
+  y=BASEto10(y);
+  if (((y>0)&&(x>0))||((y<0)&&(x<0)))
+  {
+   if ((LONG_MAX/y)>x)
+   {
+	 w=x*y;
+   }
+   else
+	 t1=0;
+  }
+  else
+  if ((LONG_MIN/y)<x)
+   {
+	 w=x*y;
+   }
+   else
+	 t1=0;
+  v=*z;
+  t2=toBASE(w,&v);
+  *z=v;
+  return t1*t2;
+}
+long int power(long int x,long int y,long int *z)
+{
+int t1=1,t2=1;
+long int w,v;
+  x=BASEto10(x);
+  y=BASEto10(y);
+  if ((x<0) &&(y%2==1))
+  {
+   if ((-pow(LONG_MAX,1.0/y)<x))
+   {
+	 w=pow(x,y);
+   }
+   else
+	 t1=0;
+  }
+  else
+  if (pow(LONG_MAX,1.0/y)>x)
+   {
+	 w=pow(x,y);
+   }
+   else
+	 t1=0;
+  v=*z;
+  t2=toBASE(w,&v);
+  *z=v;
+  return t1*t2;
 }
 
